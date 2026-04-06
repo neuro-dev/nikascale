@@ -1,0 +1,19 @@
+services:
+  tailscale:
+    container_name: nikascale
+    image: tailscale/tailscale:latest
+    hostname: ${TS_HOSTNAME}
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_EXTRA_ARGS=--login-server ${TS_SERVER} --accept-routes --advertise-exit-node --advertise-routes=0.0.0.0/0,::/0 --force-reauth
+      - TS_HOSTNAME=${TS_HOSTNAME}
+      - TS_AUTH_ONCE=true
+    volumes:
+      - ${PWD}/tailscale-volume/state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+    network_mode: host
